@@ -93,7 +93,7 @@ server.tool(
 
 server.tool(
     "submit_evaluation",
-    "Submit scores for each checklist item. Determines pass/fail (passing score >= 3) " +
+    "Submit scores for each checklist item. Determines pass/fail (passing score >= 8) " +
     "and persists the result. Failed items include reasons and suggestions for improvement.",
     submitEvaluationSchema.shape,
     async (args) => submitEvaluation(args)
