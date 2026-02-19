@@ -1,6 +1,6 @@
 {
     "name": "@wa008/ui-audit-mcp",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "MCP server for iOS app UI evaluation and testing, powered by idb + xcrun simctl",
     "type": "module",
     "main": "dist/src/index.js",
