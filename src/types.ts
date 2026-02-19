@@ -28,7 +28,7 @@ export interface EvaluationSession {
 
 export interface ScoreEntry {
     id: string;
-    score: number; // 1-5
+    score: number; // 0-10
     reason: string;
     suggestion?: string;
 }

@@ -16,9 +16,9 @@ const scoreEntrySchema = z.object({
     score: z
         .number()
         .int()
-        .min(1)
-        .max(5)
-        .describe("Score from 1 (worst) to 5 (best)"),
+        .min(0)
+        .max(10)
+        .describe("Score from 0 (worst) to 10 (best). Standard is high; 8 is passing."),
     reason: z
         .string()
         .describe("Why this score was given. REQUIRED for all scores, whether passing or failing."),
