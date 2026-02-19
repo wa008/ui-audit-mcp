@@ -1,0 +1,38 @@
+{
+    "name": "ui-audit-mcp",
+    "version": "1.0.0",
+    "description": "MCP server for iOS app UI evaluation and testing, powered by idb + xcrun simctl",
+    "type": "module",
+    "main": "dist/src/index.js",
+    "bin": {
+        "ui-audit-mcp": "dist/src/index.js"
+    },
+    "scripts": {
+        "build": "tsc",
+        "dev": "tsc --watch",
+        "start": "node dist/src/index.js",
+        "prepare": "tsc"
+    },
+    "keywords": [
+        "mcp",
+        "ios",
+        "ui-testing",
+        "idb",
+        "simctl",
+        "evaluation"
+    ],
+    "license": "MIT",
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "dependencies": {
+        "@modelcontextprotocol/sdk": "^1.12.1",
+        "uuid": "^11.1.0",
+        "zod": "^3.25.3"
+    },
+    "devDependencies": {
+        "@types/node": "^22.15.21",
+        "@types/uuid": "^10.0.0",
+        "typescript": "^5.8.3"
+    }
+}
