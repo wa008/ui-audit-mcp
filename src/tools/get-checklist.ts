@@ -54,10 +54,10 @@ export async function getChecklist(input: GetChecklistInput) {
 
     const instruction =
         input.type === "screen"
-            ? "Review the screenshot you captured via take_screenshot. Score each checklist item from 1 to 5. " +
-            "For any item scoring below 3, you MUST provide a specific reason and an actionable improvement suggestion."
-            : "Review ALL screenshots you have captured. Score each consistency dimension from 1 to 5. " +
-            "For any item scoring below 3, identify which screens are inconsistent and suggest how to unify them.";
+            ? "Review the screenshot you captured via take_screenshot. Score each checklist item from 0 to 10. " +
+            "For any item scoring below 8, you MUST provide a specific reason and an actionable improvement suggestion."
+            : "Review ALL screenshots you have captured. Score each consistency dimension from 0 to 10. " +
+            "For any item scoring below 8, identify which screens are inconsistent and suggest how to unify them.";
 
     return {
         content: [

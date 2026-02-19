@@ -62,7 +62,7 @@ export async function evaluateStyleConsistency(input: EvaluateStyleInput) {
                         instruction:
                             "Review the screenshots you have already taken for the screens listed above. " +
                             "Compare them across the 3 consistency dimensions in the checklist. " +
-                            "Score each dimension from 1 to 5. For any item scoring below 3, " +
+                            "Score each dimension from 0 to 10. For any item scoring below 8, " +
                             "identify which screens are inconsistent and suggest how to unify them. " +
                             "Then call submit_evaluation with this sessionId and your scores.",
                     },
