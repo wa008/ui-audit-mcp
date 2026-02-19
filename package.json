@@ -1,6 +1,6 @@
 {
     "name": "@wa008/ui-audit-mcp",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "description": "MCP server for iOS app UI evaluation and testing, powered by idb + xcrun simctl",
     "type": "module",
     "main": "dist/src/index.js",
@@ -17,8 +17,7 @@
         "url": "git+https://github.com/wa008/ui-audit-mcp.git"
     },
     "publishConfig": {
-        "access": "public",
-        "provenance": true
+        "access": "public"
     },
     "scripts": {
         "build": "tsc",
