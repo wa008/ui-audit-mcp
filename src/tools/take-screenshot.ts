@@ -26,7 +26,7 @@ export async function takeScreenshot(input: z.infer<typeof takeScreenshotSchema>
                     screenWidth: screenshot.width,
                     screenHeight: screenshot.height,
                     timestamp: new Date().toISOString(),
-                    hint: "Use ratio coordinates (0-1) when calling tap or swipe.",
+                    hint: "Use ratio coordinates (0-1) for tap/swipe. visually inspect for black bars (letterboxing) and status bar overlap.",
                 }),
             },
         ],

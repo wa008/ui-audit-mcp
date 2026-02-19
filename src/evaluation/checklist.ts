@@ -13,17 +13,17 @@ export const SCREEN_CHECKLIST: ChecklistItem[] = [
         id: "overlap",
         name: "Element Overlap & Safe Areas",
         description:
-            "Check for any UI elements that overlap or obscure each other. Crucially, verify that interactions and content respect system safe areas (status bar at top, home indicator at bottom) and rounded corners. No essential content should be cut off or covered.",
+            "Check for any UI elements that overlap or obscure each other. CRITICAL CHECK: Look at the top status bar (time, battery, signal). Does the app header or any button overlap with these system icons? This is a severe failure. Also check rounded corners and the bottom home indicator area.",
         scoringGuide:
-            "1 = severe overlap/cut-off, 2 = noticeable overlap, 3 = minor overlap/safe-area issue, 4 = good, 5 = perfect spacing and safe-area adherence",
+            "1 = content overlaps status bar or other elements, 2 = noticeable overlap, 3 = minor safe-area issue, 4 = good, 5 = perfect spacing and safe-area adherence",
     },
     {
         id: "layout",
         name: "Layout & Screen Utilization",
         description:
-            "Evaluate effective use of screen real estate. The app should fill the available screen size appropriate for the device (no unintended letterboxing/black bars). Elements should be balanced, with consistent alignment and spacing.",
+            "Evaluate specific screen utilization. CRITICAL FAILURE CHECK: Does the app appear to be running in a 'box' with large black/empty bars at the top and bottom (letterboxing)? This often happens when an old app runs on a new device. If seen, Score must be 1. Also check for unbalanced whitespace.",
         scoringGuide:
-            "1 = severe layout issues (e.g. not full screen), 2 = poor structure, 3 = acceptable, 4 = good balance, 5 = professional and polished",
+            "1 = letterboxing detected (black bars top/bottom) / severe layout issues, 2 = poor structure, 3 = acceptable, 4 = good balance, 5 = professional and polished",
     },
     {
         id: "info_clarity",
