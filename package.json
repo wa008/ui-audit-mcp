@@ -1,17 +1,23 @@
 {
-    "name": "ui-audit-mcp",
-    "version": "1.0.0",
+    "name": "@wa008/ui-audit-mcp",
+    "version": "1.0.1",
     "description": "MCP server for iOS app UI evaluation and testing, powered by idb + xcrun simctl",
     "type": "module",
     "main": "dist/src/index.js",
     "bin": {
         "ui-audit-mcp": "dist/src/index.js"
     },
+    "files": [
+        "dist",
+        "README.md",
+        "LICENSE"
+    ],
     "scripts": {
         "build": "tsc",
         "dev": "tsc --watch",
         "start": "node dist/src/index.js",
-        "prepare": "tsc"
+        "prepare": "tsc",
+        "prepublishOnly": "npm run build"
     },
     "keywords": [
         "mcp",

@@ -3,7 +3,7 @@
  * and provides query / summary capabilities.
  *
  * Storage layout:
- *   ~/.ui-critic-mcp/logs/<sessionId>.json
+ *   ~/.ui-audit-mcp/logs/<sessionId>.json
  */
 
 import * as fs from "node:fs";
