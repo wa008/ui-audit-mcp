@@ -28,7 +28,7 @@ export function evaluateScores(
             id: item.id,
             score,
             passed,
-            reason: entry?.reason,
+            reason: entry?.reason ?? "No score provided",
             suggestion: entry?.suggestion,
         };
     });
@@ -40,6 +40,9 @@ export function evaluateScores(
             ? parseFloat((totalScore / results.length).toFixed(2))
             : 0;
 
+    const now = new Date();
+    const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`;
+
     return {
         sessionId,
         type,
@@ -48,7 +51,7 @@ export function evaluateScores(
         averageScore,
         results,
         failedItems,
-        timestamp: new Date().toISOString(),
+        timestamp,
         attemptNumber,
     };
 }

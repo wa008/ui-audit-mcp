@@ -29,7 +29,7 @@ export interface EvaluationSession {
 export interface ScoreEntry {
     id: string;
     score: number; // 1-5
-    reason?: string;
+    reason: string;
     suggestion?: string;
 }
 
@@ -37,7 +37,7 @@ export interface EvaluationResult {
     id: string;
     score: number;
     passed: boolean;
-    reason?: string;
+    reason: string;
     suggestion?: string;
 }
 
@@ -55,9 +55,28 @@ export interface EvaluationOutcome {
 
 // ─── Logs ────────────────────────────────────────────────────
 
-export interface LogEntry extends EvaluationOutcome {
-    checklist: ChecklistItem[];
-    scores: ScoreEntry[];
+export interface LogItemDetail {
+    id: string;
+    name: string;
+    score: number;
+    reason: string;
+    suggestion?: string;
+}
+
+export interface LogEntry {
+    meta: {
+        sessionId: string;
+        timestamp: string;
+        screenName: string;
+        attemptNumber: number;
+        type: EvaluationType;
+    };
+    summary: {
+        passed: boolean;
+        averageScore: number;
+    };
+    failures: LogItemDetail[];
+    passes: LogItemDetail[];
 }
 
 export interface LogSummary {

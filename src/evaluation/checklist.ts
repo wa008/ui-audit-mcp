@@ -11,19 +11,19 @@ import { ChecklistItem } from "../types.js";
 export const SCREEN_CHECKLIST: ChecklistItem[] = [
     {
         id: "overlap",
-        name: "Element Overlap Detection",
+        name: "Element Overlap & Safe Areas",
         description:
-            "Check whether any UI elements (text, buttons, images, icons) overlap or obscure each other on the current screen.",
+            "Check for any UI elements that overlap or obscure each other. Crucially, verify that interactions and content respect system safe areas (status bar at top, home indicator at bottom) and rounded corners. No essential content should be cut off or covered.",
         scoringGuide:
-            "1 = severe overlap affecting usability, 2 = noticeable overlap, 3 = minor overlap, 4 = almost no overlap, 5 = no overlap at all",
+            "1 = severe overlap/cut-off, 2 = noticeable overlap, 3 = minor overlap/safe-area issue, 4 = good, 5 = perfect spacing and safe-area adherence",
     },
     {
         id: "layout",
-        name: "Layout & Alignment",
+        name: "Layout & Screen Utilization",
         description:
-            "Check whether button sizes are reasonable, elements are properly aligned, spacing is consistent, and the overall layout is harmonious.",
+            "Evaluate effective use of screen real estate. The app should fill the available screen size appropriate for the device (no unintended letterboxing/black bars). Elements should be balanced, with consistent alignment and spacing.",
         scoringGuide:
-            "1 = chaotic layout, 2 = obvious layout issues, 3 = acceptable with minor flaws, 4 = good layout, 5 = polished layout",
+            "1 = severe layout issues (e.g. not full screen), 2 = poor structure, 3 = acceptable, 4 = good balance, 5 = professional and polished",
     },
     {
         id: "info_clarity",

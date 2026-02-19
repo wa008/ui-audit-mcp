@@ -21,14 +21,14 @@ const scoreEntrySchema = z.object({
         .describe("Score from 1 (worst) to 5 (best)"),
     reason: z
         .string()
-        .optional()
-        .describe("Why this score was given. Required if score < passing threshold."),
+        .describe("Why this score was given. REQUIRED for all scores, whether passing or failing."),
     suggestion: z
         .string()
         .optional()
         .describe(
             "Actionable improvement suggestion. Required if score < passing threshold."
         ),
+
 });
 
 export const submitEvaluationSchema = z.object({

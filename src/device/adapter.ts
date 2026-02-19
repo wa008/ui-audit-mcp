@@ -102,8 +102,11 @@ export async function tap(
     ratioY: number
 ): Promise<{ success: boolean; pointX: number; pointY: number; error?: string }> {
     const { width, height } = await getScreenSize();
-    const pointX = Math.round(ratioX * width);
-    const pointY = Math.round(ratioY * height);
+
+    // Detect scale: 1206px wide is 402 points (3x)
+    const scale = width > 500 ? 3 : 1;
+    const pointX = Math.round((ratioX * width) / scale);
+    const pointY = Math.round((ratioY * height) / scale);
 
     try {
         await execFileAsync("idb", ["ui", "tap", String(pointX), String(pointY)]);
@@ -125,10 +128,12 @@ export async function swipe(
     endY: number
 ): Promise<{ success: boolean; error?: string }> {
     const { width, height } = await getScreenSize();
-    const x1 = Math.round(startX * width);
-    const y1 = Math.round(startY * height);
-    const x2 = Math.round(endX * width);
-    const y2 = Math.round(endY * height);
+    const scale = width > 500 ? 3 : 1;
+
+    const x1 = Math.round((startX * width) / scale);
+    const y1 = Math.round((startY * height) / scale);
+    const x2 = Math.round((endX * width) / scale);
+    const y2 = Math.round((endY * height) / scale);
 
     try {
         await execFileAsync("idb", [
@@ -147,6 +152,7 @@ export async function swipe(
 // ─── Internal ────────────────────────────────────────────
 
 let cachedScreenSize: { width: number; height: number } | null = null;
+
 
 /** Get screen size by taking a quick screenshot and reading its dimensions. */
 async function getScreenSize(): Promise<{ width: number; height: number }> {
