@@ -9,23 +9,19 @@ export const DIMENSIONS: ChecklistItem[] = [
             "You are a strict QA inspector. Your job is to find overlap problems, not to praise the UI.\n" +
             "Assume there ARE problems until you have carefully verified every region.\n\n" +
             "CHECK EACH REGION METHODICALLY — report what you see in each:\n" +
-            "1. TOP-RIGHT CORNER: Is there ANY element (button, icon, badge) that sits within or touches the status bar zone or Dynamic Island area? " +
-            "Look very carefully at the vertical position of the topmost UI element on the right side. " +
-            "If its top edge is within ~54pt of the screen top on a notch/Dynamic Island device, it is overlapping. This is a CRITICAL failure.\n" +
-            "2. TOP-LEFT CORNER: Same check — any element intruding into the status bar time/signal area?\n" +
-            "3. STATUS BAR ZONE: Does ANY app content (text, header background, button) extend behind the system time, battery, or signal indicators? Even partial intrusion = failure.\n" +
-            "4. BOTTOM SAFE AREA: Does any content overlap with the home indicator bar?\n" +
-            "5. INTER-ELEMENT: Do any two app elements (buttons, text, images, cards) visually overlap each other?\n" +
-            "6. MODAL/POPUP: If present, does it unintentionally cover critical content?\n\n" +
-            "SCORING ATTITUDE: If you are unsure whether something overlaps, score LOW. " +
-            "The purpose of this audit is to catch problems, not to give the benefit of the doubt.\n" +
+            "1. TOP-RIGHT & TOP-LEFT CORNERS (CRITICAL): Look at the black pill-shaped camera cutout (Dynamic Island) or the notch at the top center. Draw an imaginary horizontal line across the VERY BOTTOM EDGE of that cutout. Are there ANY interactive elements (like a '+' button, settings icon, profile picture) that are positioned at the same height or ABOVE this line on the left or right sides? If YES, this is a CRITICAL UI BUG. Score this 0-2 immediately.\n" +
+            "2. STATUS BAR ZONE: Does ANY app content extend behind the system time (top left), battery, or signal indicators (top right)? Look extremely closely. Even partial intrusion = failure.\n" +
+            "3. BOTTOM SAFE AREA: Does any content overlap with the horizontal home indicator bar at the very bottom?\n" +
+            "4. INTER-ELEMENT: Do any two app elements (buttons, text, images, cards) visually overlap each other?\n" +
+            "5. MODAL/POPUP: If present, does it unintentionally cover critical content?\n\n" +
+            "SCORING ATTITUDE: Visual AI models often miss top-corner overlaps. Be explicitly paranoid about buttons placed too high up near the battery or time icons. If you are unsure whether something overlaps or is too close, score LOW.\n" +
             "NOTE: Do NOT evaluate spacing aesthetics (layout), colors (style), or text meaning (info_clarity).",
         scoringGuide:
-            "0-2: Any element overlaps status bar, Dynamic Island, notch, or home indicator. Or two elements clearly cover each other.\n" +
-            "3-4: An element is dangerously close to a safe area boundary (<8pt margin) — likely overlapping on some devices.\n" +
-            "5-6: All elements are within safe areas but margins are tight (<12pt). Risk of overlap on larger text sizes or different devices.\n" +
-            "7-8: All elements are clearly within safe areas with comfortable margins (>=16pt). No inter-element overlap detected.\n" +
-            "9-10: Perfect — generous safe area margins on all sides, zero overlap risk. ONLY give 9-10 if you are absolutely certain after checking every corner.",
+            "0-2: Any element overlaps the status bar zone (e.g. above the bottom of the Dynamic Island/notch), touches the battery/time, overlaps the home indicator, or covers another element.\n" +
+            "3-4: An element is dangerously close to a safe area boundary (e.g. just barely below the Dynamic Island with no breathing room).\n" +
+            "5-6: All elements are within safe areas but margins are uncomfortably tight.\n" +
+            "7-8: All elements are clearly within safe areas with comfortable margins. No inter-element overlap detected.\n" +
+            "9-10: Perfect — generous safe area margins on all sides, zero overlap risk. ONLY give 9-10 if you are ABSOLUTELY CERTAIN the top corners are completely clear of buttons.",
     },
     {
         id: "layout",
