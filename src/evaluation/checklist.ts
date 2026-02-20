@@ -6,22 +6,22 @@ export const DIMENSIONS: ChecklistItem[] = [
         id: "overlap",
         name: "Element Overlap & Safe Areas",
         description:
-            "You are a strict QA inspector. Your job is to find overlap problems, not to praise the UI.\n" +
-            "Assume there ARE problems until you have carefully verified every region.\n\n" +
-            "CHECK EACH REGION METHODICALLY — report what you see in each:\n" +
-            "1. TOP-RIGHT & TOP-LEFT CORNERS (CRITICAL): Look at the black pill-shaped camera cutout (Dynamic Island) or the notch at the top center. Draw an imaginary horizontal line across the VERY BOTTOM EDGE of that cutout. Are there ANY interactive elements (like a '+' button, settings icon, profile picture) that are positioned at the same height or ABOVE this line on the left or right sides? If YES, this is a CRITICAL UI BUG. Score this 0-2 immediately.\n" +
-            "2. STATUS BAR ZONE: Does ANY app content extend behind the system time (top left), battery, or signal indicators (top right)? Look extremely closely. Even partial intrusion = failure.\n" +
-            "3. BOTTOM SAFE AREA: Does any content overlap with the horizontal home indicator bar at the very bottom?\n" +
-            "4. INTER-ELEMENT: Do any two app elements (buttons, text, images, cards) visually overlap each other?\n" +
-            "5. MODAL/POPUP: If present, does it unintentionally cover critical content?\n\n" +
-            "SCORING ATTITUDE: Visual AI models often miss top-corner overlaps. Be explicitly paranoid about buttons placed too high up near the battery or time icons. If you are unsure whether something overlaps or is too close, score LOW.\n" +
-            "NOTE: Do NOT evaluate spacing aesthetics (layout), colors (style), or text meaning (info_clarity).",
+            "You are a user-centric QA inspector evaluating visual interference and interactive crowding.\n" +
+            "Evaluate the screen from the perspective of a real human user trying to read and tap efficiently.\n" +
+            "Assume there ARE overlap issues until you have visually scanned the entire screen.\n\n" +
+            "CHECK FOR VISUAL INTERFERENCE & COGNITIVE NOISE:\n" +
+            "1. SYSTEM EDGE INTERFERENCE (CRITICAL): Scan the very top, bottom, and corners. Do any app elements (e.g., buttons, avatars, titles) visually mix with system indicators (time, battery, notch, home indicator)? If an app button sits awkwardly close to system icons, it creates cognitive confusion and accidental click risks. This is a CRITICAL BUG.\n" +
+            "2. INTERACTIVE CROWDING: Are touch targets (buttons, links) so close to each other or to the screen edges that a user with a large thumb might accidentally trigger the wrong action or a system gesture?\n" +
+            "3. TEXT & CONTENT CLASH: Do any app elements (text, images, floating buttons) visually collide with or bleed into each other, making them harder to read or recognize?\n" +
+            "4. MODAL/POPUP OBSTRUCTION: If a popup or sheet is present, does it awkwardly obscure essential context that the user still needs to see?\n\n" +
+            "SCORING ATTITUDE: Focus on the HUMAN visual experience. If an element 'feels' like it's stepping on another element's toes or invading system space, it is an overlap failure. Punish visual crowding heavily. If unsure, score LOW.\n" +
+            "NOTE: Do NOT evaluate logical spacing consistency (layout), colors (style), or text meaning (info_clarity).",
         scoringGuide:
-            "0-2: Any element overlaps the status bar zone (e.g. above the bottom of the Dynamic Island/notch), touches the battery/time, overlaps the home indicator, or covers another element.\n" +
-            "3-4: An element is dangerously close to a safe area boundary (e.g. just barely below the Dynamic Island with no breathing room).\n" +
-            "5-6: All elements are within safe areas but margins are uncomfortably tight.\n" +
-            "7-8: All elements are clearly within safe areas with comfortable margins. No inter-element overlap detected.\n" +
-            "9-10: Perfect — generous safe area margins on all sides, zero overlap risk. ONLY give 9-10 if you are ABSOLUTELY CERTAIN the top corners are completely clear of buttons.",
+            "0-2: Severe visual interference. Elements clearly collide (e.g. app button invading system status bar area), causing immediate cognitive confusion or severe accidental click risks.\n" +
+            "3-4: Elements don't perfectly collide, but are awkwardly close to each other or to system edges, creating noticeable visual noise or crowding.\n" +
+            "5-6: All elements are separate, but touch targets might be a bit too close for comfort. Risk of fat-finger errors.\n" +
+            "7-8: Clean separation. No visual interference. App UI respects system boundaries and provides clear touch targets.\n" +
+            "9-10: Perfect logical grouping, generous touch targets, and completely unambiguous visual separation over the entire screen.",
     },
     {
         id: "layout",
