@@ -6,6 +6,7 @@ export const takeScreenshotSchema = z.object({
     caseName: z.string().describe("Name of the test case"),
     stepIndex: z.number().int().positive().describe("Current step index (e.g. 1, 2)"),
     description: z.string().describe("Description of the observed state"),
+    expectedOutcome: z.string().optional().describe("Optional: what you expect to see on screen. Omit for pure observation steps."),
 });
 
 export async function takeScreenshot(input: z.infer<typeof takeScreenshotSchema>) {
@@ -16,7 +17,9 @@ export async function takeScreenshot(input: z.infer<typeof takeScreenshotSchema>
         input.stepIndex,
         input.description,
         "screenshot",
-        screenshot.filePath
+        screenshot.filePath,
+        undefined,
+        input.expectedOutcome
     );
 
     return {
@@ -29,9 +32,10 @@ export async function takeScreenshot(input: z.infer<typeof takeScreenshotSchema>
             {
                 type: "text" as const,
                 text: JSON.stringify({
-                    message: `Step ${input.stepIndex} recorded. Please now evaluate this screenshot across all 4 dimensions (overlap, layout, info_clarity, style) using get_evaluation_criteria and submit_dimension_score before proceeding.`,
+                    message: `Step ${input.stepIndex} recorded. Please now evaluate this screenshot across all 5 dimensions (overlap, layout, info_clarity, style, action_result) using submit_dimension_score before proceeding.`,
                     caseName: input.caseName,
                     stepIndex: input.stepIndex,
+                    expectedOutcome: input.expectedOutcome ?? "(pure observation)",
                     screenWidth: screenshot.width,
                     screenHeight: screenshot.height,
                 }),

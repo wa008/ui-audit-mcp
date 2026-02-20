@@ -8,6 +8,7 @@ export const tapSchema = z.object({
     caseName: z.string().describe("Name of the test case"),
     stepIndex: z.number().int().positive().describe("Current step index (e.g. 1, 2)"),
     description: z.string().describe("Description of the action being performed"),
+    expectedOutcome: z.string().describe("What should happen after this tap (e.g. 'Should navigate to login screen')"),
 });
 
 export async function tap(input: z.infer<typeof tapSchema>) {
@@ -28,7 +29,8 @@ export async function tap(input: z.infer<typeof tapSchema>) {
         input.description,
         "tap",
         screenshot.filePath,
-        { x: input.x, y: input.y }
+        { x: input.x, y: input.y },
+        input.expectedOutcome
     );
 
     return {
@@ -41,9 +43,10 @@ export async function tap(input: z.infer<typeof tapSchema>) {
             {
                 type: "text" as const,
                 text: JSON.stringify({
-                    message: `Step ${input.stepIndex} recorded. Please now evaluate this screenshot across all 4 dimensions (overlap, layout, info_clarity, style) using get_evaluation_criteria and submit_dimension_score before proceeding.`,
+                    message: `Step ${input.stepIndex} recorded. Expected: "${input.expectedOutcome}". Please now evaluate this screenshot across all 5 dimensions (overlap, layout, info_clarity, style, action_result) using submit_dimension_score before proceeding.`,
                     caseName: input.caseName,
                     stepIndex: input.stepIndex,
+                    expectedOutcome: input.expectedOutcome,
                     screenWidth: screenshot.width,
                     screenHeight: screenshot.height,
                 }),

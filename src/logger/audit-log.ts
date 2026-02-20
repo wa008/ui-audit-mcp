@@ -56,7 +56,8 @@ export function recordStep(
     description: string,
     actionType: "tap" | "swipe" | "screenshot",
     screenshotPath: string,
-    coordinates?: { x: number; y: number }
+    coordinates?: { x: number; y: number },
+    expectedOutcome?: string
 ): void {
     let log = readLog(caseName);
     if (!log) {
@@ -74,6 +75,7 @@ export function recordStep(
         actionType,
         screenshotPath,
         coordinates,
+        expectedOutcome,
         timestamp: new Date().toISOString(),
         evaluations: existingStep ? existingStep.evaluations : {},
     };

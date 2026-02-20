@@ -19,6 +19,7 @@ export interface StepRecord {
     description: string;
     actionType: "tap" | "swipe" | "screenshot";
     coordinates?: { x: number; y: number };
+    expectedOutcome?: string;
     screenshotPath: string;
     timestamp: string;
     evaluations: Record<string, DimensionScore>;

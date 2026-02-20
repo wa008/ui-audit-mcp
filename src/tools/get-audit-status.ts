@@ -58,6 +58,9 @@ function renderStepDetails(log: AuditLog): string {
     for (const step of steps) {
         md += `### Step ${step.stepIndex}: ${step.description}\n`;
         md += `- **操作**: ${step.actionType} ${step.coordinates ? `(x: ${step.coordinates.x}, y: ${step.coordinates.y})` : ""}\n`;
+        if (step.expectedOutcome) {
+            md += `- **预期结果**: ${step.expectedOutcome}\n`;
+        }
 
         for (const dim of REQUIRED_DIMS) {
             const ev = step.evaluations ? step.evaluations[dim] : undefined;

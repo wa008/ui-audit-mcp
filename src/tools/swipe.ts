@@ -10,6 +10,7 @@ export const swipeSchema = z.object({
     caseName: z.string().describe("Name of the test case"),
     stepIndex: z.number().int().positive().describe("Current step index (e.g. 1, 2)"),
     description: z.string().describe("Description of the action being performed"),
+    expectedOutcome: z.string().describe("What should happen after this swipe (e.g. 'List should scroll down to show more items')"),
 });
 
 export async function swipe(input: z.infer<typeof swipeSchema>) {
@@ -30,7 +31,8 @@ export async function swipe(input: z.infer<typeof swipeSchema>) {
         input.description,
         "swipe",
         screenshot.filePath,
-        { x: input.startX, y: input.startY }
+        { x: input.startX, y: input.startY },
+        input.expectedOutcome
     );
 
     return {
@@ -43,9 +45,10 @@ export async function swipe(input: z.infer<typeof swipeSchema>) {
             {
                 type: "text" as const,
                 text: JSON.stringify({
-                    message: `Step ${input.stepIndex} recorded. Please now evaluate this screenshot across all 4 dimensions (overlap, layout, info_clarity, style) using get_evaluation_criteria and submit_dimension_score before proceeding.`,
+                    message: `Step ${input.stepIndex} recorded. Expected: "${input.expectedOutcome}". Please now evaluate this screenshot across all 5 dimensions (overlap, layout, info_clarity, style, action_result) using submit_dimension_score before proceeding.`,
                     caseName: input.caseName,
                     stepIndex: input.stepIndex,
+                    expectedOutcome: input.expectedOutcome,
                     screenWidth: screenshot.width,
                     screenHeight: screenshot.height,
                 }),

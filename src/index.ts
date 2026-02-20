@@ -9,7 +9,7 @@
  *
  * Evaluation workflow for each step:
  *   1. Perform an action (tap / swipe / take_screenshot) — this auto-takes a screenshot and registers a step.
- *   2. For each required dimension (overlap, layout, info_clarity, style):
+ *   2. For each required dimension (overlap, layout, info_clarity, style, action_result):
  *      a. Call get_evaluation_criteria(dimension) to read the scoring rubric.
  *      b. Visually inspect the screenshot.
  *      c. Call submit_dimension_score to record your score.
@@ -71,7 +71,7 @@ server.tool(
     "get_evaluation_criteria",
     "Get UI evaluation dimensions and scoring rubrics. " +
     "Call without arguments to list all dimension IDs. Pass a dimension ID (e.g. 'overlap') to get its detailed prompt and scoring guide. " +
-    "Required dimensions for every step: overlap, layout, info_clarity, style.",
+    "Required dimensions for every step: overlap, layout, info_clarity, style, action_result.",
     getEvaluationCriteriaSchema.shape,
     async (args) => getEvaluationCriteria(args)
 );
@@ -79,7 +79,7 @@ server.tool(
 server.tool(
     "submit_dimension_score",
     "Submit a score (0-10) and reason for one UI dimension on a specific step. " +
-    "Every step requires scores for all four dimensions: overlap, layout, info_clarity, style. " +
+    "Every step requires scores for all 5 dimensions: overlap, layout, info_clarity, style, action_result. " +
     "After submitting, continue with the remaining dimensions, then call get_audit_status to confirm completion.",
     submitDimensionScoreSchema.shape,
     async (args) => submitDimensionScore(args)

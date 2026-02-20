@@ -74,6 +74,26 @@ export const DIMENSIONS: ChecklistItem[] = [
             "7-8: Mostly consistent and polished, with only minor deviations.\n" +
             "9-10: Perfect — unified color scheme, consistent typography, cohesive component design, professional polish.",
     },
+    {
+        id: "action_result",
+        name: "Action Result Verification",
+        description:
+            "Focus ONLY on whether the action performed in this step achieved its expected outcome. " +
+            "The step's expectedOutcome field describes what should have happened after the action. " +
+            "Compare the current screenshot against that expectation.\n" +
+            "Examine the following in order:\n" +
+            "1. SCREEN TRANSITION: Did the screen navigate to the expected destination? If the action was a button tap, did the expected screen/modal/menu appear?\n" +
+            "2. STATE CHANGE: Did the expected visual state change occur (e.g., checkbox toggled, item added to list, form field populated)?\n" +
+            "3. NO UNEXPECTED ERRORS: Are there any error dialogs, crash screens, or loading spinners that indicate a failure?\n" +
+            "4. RESPONSIVENESS: Did the UI respond at all, or does it look identical to the previous step (suggesting the tap/swipe missed or had no effect)?\n" +
+            "NOTE: If this step is a pure observation (screenshot only) with no specific expectedOutcome, score 10 (not applicable). " +
+            "Do NOT evaluate visual quality here — only whether the action functionally succeeded.",
+        scoringGuide:
+            "0-3: Action clearly failed — wrong screen appeared, error dialog shown, or UI did not respond at all.\n" +
+            "4-6: Action partially succeeded — correct screen appeared but with unexpected side effects or missing expected elements.\n" +
+            "7-8: Action succeeded with minor discrepancies — expected screen is shown but a small detail differs from expectation.\n" +
+            "9-10: Action fully succeeded — the screenshot matches the expectedOutcome exactly, or this step has no expectedOutcome (pure observation).",
+    },
 ];
 
 export const REQUIRED_DIMS = DIMENSIONS.map(d => d.id);

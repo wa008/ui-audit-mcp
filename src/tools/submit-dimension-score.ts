@@ -25,7 +25,7 @@ export async function submitDimensionScore(input: z.infer<typeof submitDimension
 
     let hint: string;
     if (remaining.length === 0) {
-        hint = `All 4 dimensions for Step ${input.stepIndex} are complete. You may call get_audit_status to review progress or proceed to the next action.`;
+        hint = `All 5 dimensions for Step ${input.stepIndex} are complete. You may call get_audit_status to review progress or proceed to the next action.`;
     } else {
         hint = `${remaining.length} dimension(s) still needed for Step ${input.stepIndex}: ${remaining.join(", ")}. Please evaluate them before moving to the next action.`;
     }
