@@ -129,7 +129,6 @@ export async function swipe(
 ): Promise<{ success: boolean; error?: string }> {
     const { width, height } = await getScreenSize();
     const scale = width > 500 ? 3 : 1;
-
     const x1 = Math.round((startX * width) / scale);
     const y1 = Math.round((startY * height) / scale);
     const x2 = Math.round((endX * width) / scale);

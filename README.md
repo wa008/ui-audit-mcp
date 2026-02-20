@@ -52,20 +52,19 @@ npm install
 | Tool | Purpose |
 |---|---|
 | `launch_app` | Launch app by Bundle ID |
-| `list_apps` | keys to find Bundle IDs |
-| `take_screenshot` | Capture screen & metadata |
-| `tap` / `swipe` | Interact with UI (ratio coordinates 0-1) |
-| `get_checklist` | Start evaluation session (screen/style) |
-| `submit_evaluation` | Submit scores (1-5) & get pass/fail result |
-| `evaluate_style_consistency` | Compare multiple screens |
-| `get_evaluation_log` | Review past results |
+| `take_screenshot` | Capture screen & track evaluation step |
+| `tap` / `swipe` | Interact with UI (ratio coordinates), screenshot, and track step |
+| `get_evaluation_criteria` | Get dimensions and scoring rubrics (Prompts) |
+| `submit_dimension_score` | Submit score (1-10) for a single dimension on a tracked step |
+| `get_audit_status` | View missing evaluations dashboard or final markdown report |
 
 ## Typical Workflow
-1. `list_apps(all: false)` → Find Bundle ID
-2. `launch_app("com.example.app")`
-3. `take_screenshot()`
-4. `get_checklist(type: "screen")` → Get session ID
-5. Agent analyzes UI → `submit_evaluation(sessionId, scores)`
+1. `launch_app("com.example.app")`
+2. `take_screenshot("MyTestCase", 1, "Verify Initial Screen")` or `tap(0.5, 0.5, "MyTestCase", 2, "Click Login")`
+3. `get_evaluation_criteria("overlap")` → Read the prompt for overlap
+4. Agent analyzes UI → `submit_dimension_score("MyTestCase", 1, "overlap", 9, "No overlap")`
+5. Repeat 3-4 until all dimensions are evaluated for the step
+6. `get_audit_status(["MyTestCase"])` → Output the full markdown report
 
 ## Data
 Logs: `~/.ui-audit-mcp/logs/`

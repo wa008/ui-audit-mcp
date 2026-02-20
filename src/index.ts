@@ -5,20 +5,15 @@
  *
  * An MCP server for iOS app UI evaluation and testing.
  * Uses idb + xcrun simctl for device operations (launch, screenshot, tap, swipe)
- * and provides a structured checklist-based evaluation workflow.
+ * and provides a rule-based, trackable evaluation workflow.
  *
- * Tools:
- *   Device operations:
- *     - launch_app          Launch an iOS app by bundle ID
- *     - take_screenshot     Capture the current screen as base64 PNG
- *     - tap                 Tap at ratio coordinates (0-1)
- *     - swipe               Swipe between ratio coordinates (0-1)
- *
- *   Evaluation:
- *     - get_checklist        Get the evaluation checklist and create a session
- *     - submit_evaluation    Submit scores and get pass/fail result
- *     - evaluate_style_consistency  Compare multiple screenshots for style consistency
- *     - get_evaluation_log   Query past evaluation results
+ * Evaluation workflow for each step:
+ *   1. Perform an action (tap / swipe / take_screenshot) — this auto-takes a screenshot and registers a step.
+ *   2. For each required dimension (overlap, layout, info_clarity, style):
+ *      a. Call get_evaluation_criteria(dimension) to read the scoring rubric.
+ *      b. Visually inspect the screenshot.
+ *      c. Call submit_dimension_score to record your score.
+ *   3. Call get_audit_status to confirm all dimensions are complete before proceeding to the next action.
  */
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
@@ -28,15 +23,13 @@ import { launchAppSchema, launchApp } from "./tools/launch-app.js";
 import { takeScreenshotSchema, takeScreenshot } from "./tools/take-screenshot.js";
 import { tapSchema, tap } from "./tools/tap.js";
 import { swipeSchema, swipe } from "./tools/swipe.js";
-import { getChecklistSchema, getChecklist } from "./tools/get-checklist.js";
-import { submitEvaluationSchema, submitEvaluation } from "./tools/submit-evaluation.js";
-import { evaluateStyleSchema, evaluateStyleConsistency } from "./tools/evaluate-style.js";
-import { getEvaluationLogSchema, getEvaluationLog } from "./tools/get-log.js";
-import { listApps, listAppsSchema } from "./tools/list-apps.js";
+import { getEvaluationCriteriaSchema, getEvaluationCriteria } from "./tools/get-evaluation-criteria.js";
+import { submitDimensionScoreSchema, submitDimensionScore } from "./tools/submit-dimension-score.js";
+import { getAuditStatusSchema, getAuditStatus } from "./tools/get-audit-status.js";
 
 const server = new McpServer({
     name: "ui-audit-mcp",
-    version: "1.0.0",
+    version: "2.0.0",
 });
 
 // ─── Device operation tools ────────────────────────────────
@@ -49,33 +42,25 @@ server.tool(
 );
 
 server.tool(
-    "list_apps",
-    "List installed apps on the booted simulator using 'idb list-apps'. " +
-    "Useful for finding bundle IDs. Returns an array of { name, bundleId, type, state }.",
-    listAppsSchema.shape,
-    async (args) => listApps(args)
-);
-
-server.tool(
     "take_screenshot",
-    "Capture the current simulator screen as a base64 PNG image. " +
-    "Returns the image for visual inspection along with screen metadata.",
+    "Capture the current simulator screen and register it as a tracked evaluation step. " +
+    "After this call, evaluate the screenshot across all required dimensions before moving to the next action.",
     takeScreenshotSchema.shape,
     async (args) => takeScreenshot(args)
 );
 
 server.tool(
     "tap",
-    "Tap at a specific position on the screen. " +
-    "Uses ratio coordinates (0-1): x=0 is left edge, x=1 is right edge, y=0 is top, y=1 is bottom.",
+    "Tap at a position on screen (ratio 0-1). Automatically captures a screenshot and registers a tracked step. " +
+    "After this call, evaluate the screenshot across all required dimensions before moving to the next action.",
     tapSchema.shape,
     async (args) => tap(args)
 );
 
 server.tool(
     "swipe",
-    "Swipe from one point to another on the screen. " +
-    "Uses ratio coordinates (0-1) for both start and end positions.",
+    "Swipe on screen (ratio 0-1). Automatically captures a screenshot and registers a tracked step. " +
+    "After this call, evaluate the screenshot across all required dimensions before moving to the next action.",
     swipeSchema.shape,
     async (args) => swipe(args)
 );
@@ -83,37 +68,29 @@ server.tool(
 // ─── Evaluation tools ──────────────────────────────────────
 
 server.tool(
-    "get_checklist",
-    "Get the UI evaluation checklist and create an evaluation session. " +
-    "Use type='screen' for single-screen quality evaluation (4 items: overlap, layout, info clarity, ambiguity). " +
-    "Use type='style' for multi-screen style consistency evaluation (3 items: color, component, typography).",
-    getChecklistSchema.shape,
-    async (args) => getChecklist(args)
+    "get_evaluation_criteria",
+    "Get UI evaluation dimensions and scoring rubrics. " +
+    "Call without arguments to list all dimension IDs. Pass a dimension ID (e.g. 'overlap') to get its detailed prompt and scoring guide. " +
+    "Required dimensions for every step: overlap, layout, info_clarity, style.",
+    getEvaluationCriteriaSchema.shape,
+    async (args) => getEvaluationCriteria(args)
 );
 
 server.tool(
-    "submit_evaluation",
-    "Submit scores for each checklist item. Determines pass/fail (passing score >= 8) " +
-    "and persists the result. Failed items include reasons and suggestions for improvement.",
-    submitEvaluationSchema.shape,
-    async (args) => submitEvaluation(args)
+    "submit_dimension_score",
+    "Submit a score (0-10) and reason for one UI dimension on a specific step. " +
+    "Every step requires scores for all four dimensions: overlap, layout, info_clarity, style. " +
+    "After submitting, continue with the remaining dimensions, then call get_audit_status to confirm completion.",
+    submitDimensionScoreSchema.shape,
+    async (args) => submitDimensionScore(args)
 );
 
 server.tool(
-    "evaluate_style_consistency",
-    "Compare multiple screenshots for visual style consistency. " +
-    "Provide at least 2 screenshots. Returns all images alongside a style consistency checklist. " +
-    "After analyzing, call submit_evaluation with the returned sessionId and your scores.",
-    evaluateStyleSchema.shape,
-    async (args) => evaluateStyleConsistency(args)
-);
-
-server.tool(
-    "get_evaluation_log",
-    "Query past evaluation results and summary statistics. " +
-    "Use to review improvement across attempts or generate a final report.",
-    getEvaluationLogSchema.shape,
-    async (args) => getEvaluationLog(args)
+    "get_audit_status",
+    "Get the current dashboard or test case report. " +
+    "Use this to see which dimensions are missing (Pending) or to get the final markdown report if all steps are fully evaluated.",
+    getAuditStatusSchema.shape,
+    async (args) => getAuditStatus(args)
 );
 
 import { preflight } from "./device/adapter.js";

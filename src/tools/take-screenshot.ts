@@ -1,17 +1,24 @@
-/**
- * Tool: take_screenshot
- * Capture the current simulator screen and return it as a base64 PNG image.
- */
-
 import { z } from "zod";
 import * as device from "../device/adapter.js";
+import { recordStep } from "../logger/audit-log.js";
 
 export const takeScreenshotSchema = z.object({
-    screenName: z.string().optional().describe("Label for this screen (e.g. 'LoginScreen'). Used for logging."),
+    caseName: z.string().describe("Name of the test case"),
+    stepIndex: z.number().int().positive().describe("Current step index (e.g. 1, 2)"),
+    description: z.string().describe("Description of the observed state"),
 });
 
 export async function takeScreenshot(input: z.infer<typeof takeScreenshotSchema>) {
     const screenshot = await device.takeScreenshot();
+
+    recordStep(
+        input.caseName,
+        input.stepIndex,
+        input.description,
+        "screenshot",
+        screenshot.filePath
+    );
+
     return {
         content: [
             {
@@ -22,11 +29,11 @@ export async function takeScreenshot(input: z.infer<typeof takeScreenshotSchema>
             {
                 type: "text" as const,
                 text: JSON.stringify({
-                    screenName: input.screenName ?? "unnamed",
+                    message: `Step ${input.stepIndex} recorded. Please now evaluate this screenshot across all 4 dimensions (overlap, layout, info_clarity, style) using get_evaluation_criteria and submit_dimension_score before proceeding.`,
+                    caseName: input.caseName,
+                    stepIndex: input.stepIndex,
                     screenWidth: screenshot.width,
                     screenHeight: screenshot.height,
-                    timestamp: new Date().toISOString(),
-                    hint: "Use ratio coordinates (0-1) for tap/swipe. visually inspect for black bars (letterboxing) and status bar overlap.",
                 }),
             },
         ],
