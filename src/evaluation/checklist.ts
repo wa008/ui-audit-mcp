@@ -1,98 +1,116 @@
 import { ChecklistItem } from "../types.js";
 
-/** System-wide UI quality audit dimensions */
+/** System-wide UI quality audit dimensions — strict scoring */
 export const DIMENSIONS: ChecklistItem[] = [
     {
         id: "overlap",
         name: "Element Overlap & Safe Areas",
         description:
-            "Focus ONLY on whether UI elements physically cover or obscure each other. " +
-            "Examine the following in order:\n" +
-            "1. STATUS BAR: Does any app content (header, button, text) intrude into the system status bar area (time, battery, signal icons)? Even 1px overlap is a critical failure.\n" +
-            "2. NOTCH / DYNAMIC ISLAND: Is any content hidden behind the notch or Dynamic Island?\n" +
-            "3. HOME INDICATOR: Does any bottom content overlap with the home indicator bar?\n" +
-            "4. INTER-ELEMENT OVERLAP: Do any buttons, text fields, images, or cards overlap each other within the app content area?\n" +
-            "5. MODAL / POPUP: If a modal or popup is present, does it unintentionally cover critical information behind it?\n" +
-            "NOTE: Do NOT evaluate spacing aesthetics (that is layout), color choices (that is style), or text readability (that is info_clarity).",
+            "You are a strict QA inspector. Your job is to find overlap problems, not to praise the UI.\n" +
+            "Assume there ARE problems until you have carefully verified every region.\n\n" +
+            "CHECK EACH REGION METHODICALLY — report what you see in each:\n" +
+            "1. TOP-RIGHT CORNER: Is there ANY element (button, icon, badge) that sits within or touches the status bar zone or Dynamic Island area? " +
+            "Look very carefully at the vertical position of the topmost UI element on the right side. " +
+            "If its top edge is within ~54pt of the screen top on a notch/Dynamic Island device, it is overlapping. This is a CRITICAL failure.\n" +
+            "2. TOP-LEFT CORNER: Same check — any element intruding into the status bar time/signal area?\n" +
+            "3. STATUS BAR ZONE: Does ANY app content (text, header background, button) extend behind the system time, battery, or signal indicators? Even partial intrusion = failure.\n" +
+            "4. BOTTOM SAFE AREA: Does any content overlap with the home indicator bar?\n" +
+            "5. INTER-ELEMENT: Do any two app elements (buttons, text, images, cards) visually overlap each other?\n" +
+            "6. MODAL/POPUP: If present, does it unintentionally cover critical content?\n\n" +
+            "SCORING ATTITUDE: If you are unsure whether something overlaps, score LOW. " +
+            "The purpose of this audit is to catch problems, not to give the benefit of the doubt.\n" +
+            "NOTE: Do NOT evaluate spacing aesthetics (layout), colors (style), or text meaning (info_clarity).",
         scoringGuide:
-            "0-3: Critical overlap detected — elements cover system UI or each other, causing functional obstruction.\n" +
-            "4-6: Minor overlap exists but does not block core functionality.\n" +
-            "7-8: No overlap detected, but margins against safe areas are uncomfortably tight (< 4pt).\n" +
-            "9-10: Perfect — all elements are fully within safe areas with comfortable margins, zero overlap.",
+            "0-2: Any element overlaps status bar, Dynamic Island, notch, or home indicator. Or two elements clearly cover each other.\n" +
+            "3-4: An element is dangerously close to a safe area boundary (<8pt margin) — likely overlapping on some devices.\n" +
+            "5-6: All elements are within safe areas but margins are tight (<12pt). Risk of overlap on larger text sizes or different devices.\n" +
+            "7-8: All elements are clearly within safe areas with comfortable margins (>=16pt). No inter-element overlap detected.\n" +
+            "9-10: Perfect — generous safe area margins on all sides, zero overlap risk. ONLY give 9-10 if you are absolutely certain after checking every corner.",
     },
     {
         id: "layout",
         name: "Layout & Spatial Balance",
         description:
-            "Focus ONLY on how the screen space is utilized and whether elements are spatially well-arranged. " +
-            "Examine the following in order:\n" +
-            "1. LETTERBOXING: Does the app appear to run inside a smaller box with large black/empty bars at the top and bottom? This is a critical failure (score 0).\n" +
-            "2. SCREEN FILL: Does the content naturally fill the available screen area without feeling cramped or empty?\n" +
-            "3. WHITESPACE BALANCE: Is the whitespace distributed evenly? Are there large, unexplained empty gaps on one side while the other side is dense?\n" +
-            "4. ALIGNMENT: Are related elements (labels, inputs, buttons) aligned to a consistent vertical or horizontal axis? Look for jagged left edges or uneven column widths.\n" +
-            "5. SPACING CONSISTENCY: Are the gaps between similar elements (e.g., list items, card margins) uniform?\n" +
-            "NOTE: Do NOT evaluate whether elements cover each other (that is overlap), color or font choices (that is style), or text meaning (that is info_clarity).",
+            "You are a strict QA inspector for layout quality. Your job is to find spatial problems.\n" +
+            "Assume the layout has issues until you verify otherwise.\n\n" +
+            "CHECK EACH ASPECT:\n" +
+            "1. LETTERBOXING: Does the app appear to run inside a smaller box with black/empty bars? This is score 0, no exceptions.\n" +
+            "2. SCREEN UTILIZATION: Is there a large empty area that serves no purpose? Is content crammed into only half the screen while the rest is wasted?\n" +
+            "3. ALIGNMENT: Pick any two similar elements (e.g., two cards, two labels). Are their left edges aligned? Are the gaps between them equal? Misalignment = deduction.\n" +
+            "4. SPACING: Are gaps between elements consistent? Measure visually: if card A-to-B gap looks different from card B-to-C gap, that is a problem.\n" +
+            "5. RESPONSIVE FIT: Does the layout feel designed for this screen size, or does it look like it was designed for a different device?\n\n" +
+            "SCORING ATTITUDE: Do not be generous. A 'basically fine' layout is a 6, not an 8.\n" +
+            "NOTE: Do NOT evaluate overlap (that is overlap), colors (that is style), or text meaning (that is info_clarity).",
         scoringGuide:
-            "0-3: Letterboxing detected, or layout is severely broken (elements piled up, massive empty areas).\n" +
-            "4-6: Layout is functional but has noticeable imbalance — uneven spacing, misaligned elements, or wasted space.\n" +
-            "7-8: Generally well-structured, but minor spacing or alignment imperfections exist.\n" +
-            "9-10: Perfect — balanced whitespace, consistent spacing, strong alignment, content fills screen naturally.",
+            "0-2: Letterboxing detected, or layout is severely broken (elements piled up, massive empty areas, content off-screen).\n" +
+            "3-4: Major layout issues — clearly uneven spacing, significant misalignment, or large wasted areas.\n" +
+            "5-6: Layout is functional but has noticeable imperfections — some uneven spacing or minor alignment issues. This is the 'OK but not great' range.\n" +
+            "7-8: Well-structured layout with only very minor imperfections that require careful inspection to notice.\n" +
+            "9-10: Flawless — pixel-perfect alignment, perfectly consistent spacing, optimal screen utilization. Extremely rare.",
     },
     {
         id: "info_clarity",
         name: "Information Clarity & Readability",
         description:
-            "Focus ONLY on whether a user can quickly understand what this screen communicates and what action to take. " +
-            "Examine the following in order:\n" +
-            "1. PRIMARY CTA: Is there a clear primary call-to-action? Can the user instantly identify what to do next?\n" +
-            "2. INFORMATION HIERARCHY: Are headings visually dominant over body text? Is the most important information the most prominent?\n" +
-            "3. TEXT TRUNCATION: Is any text cut off with '...' or overflowing its container, losing meaningful content?\n" +
-            "4. LABEL AMBIGUITY: Are button labels, icon meanings, or tab names confusing or misleading? Would a first-time user understand what each element does?\n" +
-            "5. CONTRAST & READABILITY: Is text legible against its background? Are there low-contrast text areas that are hard to read?\n" +
-            "NOTE: Do NOT evaluate spacing or alignment (that is layout), element overlap (that is overlap), or color harmony (that is style).",
+            "You are a strict QA inspector for information clarity. Your job is to find confusing elements.\n" +
+            "Imagine you are a FIRST-TIME user of this app who has never seen it before.\n\n" +
+            "CHECK EACH ASPECT:\n" +
+            "1. FIRST IMPRESSION: Within 2 seconds of looking at this screen, can you tell what it does and what the main action is? If not, that is a problem.\n" +
+            "2. BUTTON LABELS: Read every button/link text. Would a first-time user understand what each does? 'Submit' is clearer than a bare icon.\n" +
+            "3. HIERARCHY: Is the most important element (title, CTA) visually the most prominent? Or is secondary info competing for attention?\n" +
+            "4. TEXT TRUNCATION: Is any text cut off with '...' or overflowing? Even one truncated label = deduction.\n" +
+            "5. CONTRAST: Is all text easily readable against its background? Check small/light text especially.\n" +
+            "6. ICON MEANING: Are there any icons without labels that could be ambiguous?\n\n" +
+            "SCORING ATTITUDE: If any single element is confusing, cap the score at 7. " +
+            "Multiple unclear elements = score 5 or below.\n" +
+            "NOTE: Do NOT evaluate spacing (layout), overlap (overlap), or color harmony (style).",
         scoringGuide:
-            "0-3: Key information is impossible to find, CTA is absent or hidden, or labels are severely misleading.\n" +
-            "4-6: Information is present but requires effort to parse — weak hierarchy, some ambiguous labels, or minor truncation.\n" +
-            "7-8: Generally clear with good hierarchy, but 1-2 minor issues (e.g., one slightly ambiguous icon).\n" +
-            "9-10: Perfect — immediate clarity, strong hierarchy, unambiguous labels, fully legible text, obvious CTA.",
+            "0-2: Screen purpose is unclear, CTA is missing/hidden, or labels are severely misleading.\n" +
+            "3-4: Core purpose is guessable but requires effort. Multiple ambiguous labels or icons.\n" +
+            "5-6: Generally understandable but has 1-2 confusing elements (ambiguous icon, truncated text, weak hierarchy).\n" +
+            "7-8: Clear and well-organized with only one very minor issue. First-time user would understand immediately.\n" +
+            "9-10: Crystal clear — perfect hierarchy, unambiguous labels, no truncation, excellent contrast. Every element self-explanatory.",
     },
     {
         id: "style",
         name: "Visual Style & Consistency",
         description:
-            "Focus ONLY on the visual aesthetics and design consistency of this single screen. " +
-            "Examine the following in order:\n" +
-            "1. COLOR PALETTE: Are the colors harmonious? Do primary, secondary, and accent colors feel intentional and cohesive, or do they clash?\n" +
-            "2. TYPOGRAPHY: Are font sizes, weights, and families consistent across the screen? Do headings, body text, and captions follow a clear typographic scale?\n" +
-            "3. COMPONENT CONSISTENCY: Do similar components (buttons, cards, input fields) share the same visual treatment (corner radius, shadow, border style)?\n" +
-            "4. ICONOGRAPHY: Do icons share a consistent style (outline vs filled, stroke width, size)?\n" +
-            "5. OVERALL POLISH: Does the screen feel professionally designed, or does it look like a rough prototype with placeholder styling?\n" +
-            "NOTE: Do NOT evaluate information meaning (that is info_clarity), spatial arrangement (that is layout), or element occlusion (that is overlap).",
+            "You are a strict QA inspector for visual design consistency. Your job is to find inconsistencies.\n" +
+            "Compare every element against every other element of the same type.\n\n" +
+            "CHECK EACH ASPECT:\n" +
+            "1. COLOR PALETTE: Count the number of distinct colors used. Do they feel intentional and harmonious, or random?\n" +
+            "2. TYPOGRAPHY: Are there more than 2 font sizes that don't follow a clear scale? Mixed font weights without reason?\n" +
+            "3. COMPONENT STYLING: Compare all buttons — same corner radius? Same padding? Compare all cards — same shadow, border, background?\n" +
+            "4. ICONOGRAPHY: Are all icons the same style (outline vs filled, same stroke width)? Mixed styles = deduction.\n" +
+            "5. POLISH: Does it look professionally designed or like a prototype? Placeholder content (e.g., 'Lorem ipsum', stock icons) = major deduction.\n\n" +
+            "SCORING ATTITUDE: Consistency is binary per element — if two buttons look different, they are inconsistent, period.\n" +
+            "NOTE: Do NOT evaluate text meaning (info_clarity), spatial layout (layout), or overlap (overlap).",
         scoringGuide:
-            "0-3: No coherent visual style — clashing colors, mixed icon styles, inconsistent component design.\n" +
-            "4-6: A basic style exists but with noticeable inconsistencies (e.g., two different button styles, uneven font weights).\n" +
-            "7-8: Mostly consistent and polished, with only minor deviations.\n" +
-            "9-10: Perfect — unified color scheme, consistent typography, cohesive component design, professional polish.",
+            "0-2: No design system — clashing colors, random fonts, inconsistent components everywhere.\n" +
+            "3-4: Some design intent visible but multiple clear inconsistencies (different button styles, mixed icon sets).\n" +
+            "5-6: Basic consistency exists but with noticeable deviations. 'Mostly OK' = 6 at best.\n" +
+            "7-8: Strong consistency with only 1 minor deviation requiring careful inspection.\n" +
+            "9-10: Pixel-perfect design system adherence. Every element cohesive. Extremely rare.",
     },
     {
         id: "action_result",
         name: "Action Result Verification",
         description:
-            "Focus ONLY on whether the action performed in this step achieved its expected outcome. " +
-            "The step's expectedOutcome field describes what should have happened after the action. " +
-            "Compare the current screenshot against that expectation.\n" +
-            "Examine the following in order:\n" +
-            "1. SCREEN TRANSITION: Did the screen navigate to the expected destination? If the action was a button tap, did the expected screen/modal/menu appear?\n" +
-            "2. STATE CHANGE: Did the expected visual state change occur (e.g., checkbox toggled, item added to list, form field populated)?\n" +
-            "3. NO UNEXPECTED ERRORS: Are there any error dialogs, crash screens, or loading spinners that indicate a failure?\n" +
-            "4. RESPONSIVENESS: Did the UI respond at all, or does it look identical to the previous step (suggesting the tap/swipe missed or had no effect)?\n" +
-            "NOTE: If this step is a pure observation (screenshot only) with no specific expectedOutcome, score 10 (not applicable). " +
-            "Do NOT evaluate visual quality here — only whether the action functionally succeeded.",
+            "You are a strict QA inspector verifying whether the action actually worked.\n" +
+            "The step's expectedOutcome describes what SHOULD have happened. Compare the screenshot against it.\n\n" +
+            "CHECK EACH ASPECT:\n" +
+            "1. SCREEN TRANSITION: If the action was a navigation tap, did the correct destination screen appear? Wrong screen = score 0.\n" +
+            "2. STATE CHANGE: If the action should toggle/add/remove something, is that change visually confirmed in the screenshot?\n" +
+            "3. ERROR PRESENCE: Are there any error dialogs, crash screens, or infinite loading spinners? These indicate failure.\n" +
+            "4. NO RESPONSE: Does the screen look identical to before the action? If so, the action likely missed or failed.\n\n" +
+            "SCORING ATTITUDE: If the expectedOutcome is not clearly achieved, score LOW. Partial success is still a problem.\n" +
+            "If this step is a pure observation (no expectedOutcome), score 10.",
         scoringGuide:
-            "0-3: Action clearly failed — wrong screen appeared, error dialog shown, or UI did not respond at all.\n" +
-            "4-6: Action partially succeeded — correct screen appeared but with unexpected side effects or missing expected elements.\n" +
-            "7-8: Action succeeded with minor discrepancies — expected screen is shown but a small detail differs from expectation.\n" +
-            "9-10: Action fully succeeded — the screenshot matches the expectedOutcome exactly, or this step has no expectedOutcome (pure observation).",
+            "0-2: Action clearly failed — wrong screen, error dialog, crash, or no UI response at all.\n" +
+            "3-4: Action had some effect but the result does not match expectedOutcome (e.g., navigated to wrong tab).\n" +
+            "5-6: Action partially achieved the goal but with unexpected side effects or missing expected elements.\n" +
+            "7-8: Action succeeded — the expected screen/state is present but with minor discrepancies.\n" +
+            "9-10: Action fully succeeded — screenshot exactly matches expectedOutcome. Or no expectedOutcome (pure observation).",
     },
 ];
 
