@@ -9,19 +9,19 @@ export const getAuditStatusSchema = z.object({
 
 // Helper for rendering incomplete template
 function renderIncompleteTemplate(log: AuditLog, missingItems: { stepIndex: number; missing: string[] }[]): string {
-    let md = `# 📊 审计进度报告: ${log.caseName}\n`;
-    md += `**状态**: 🚧 评估未完成\n\n`;
+    let md = `# 📊 Audit Progress Report: ${log.caseName}\n`;
+    md += `**Status**: 🚧 Evaluation Incomplete\n\n`;
 
     // Missing summary
-    md += `## 🔴 待办评估任务 (Pending Evaluations)\n`;
-    md += `Agent 请注意：您还需要完成以下维度的评估才能生成最终成绩：\n`;
+    md += `## 🔴 Pending Evaluations\n`;
+    md += `Attention Agent: You still need to complete the evaluations for the following dimensions to generate the final report:\n`;
     for (const item of missingItems) {
-        md += `- Step ${item.stepIndex}: 缺失 [${item.missing.join(", ")}]\n`;
+        md += `- Step ${item.stepIndex}: Missing [${item.missing.join(", ")}]\n`;
     }
     md += `\n`;
 
     // Step details
-    md += `## 📝 已评估记录\n`;
+    md += `## 📝 Evaluated Records\n`;
     md += renderStepDetails(log);
 
     return md;
@@ -29,24 +29,24 @@ function renderIncompleteTemplate(log: AuditLog, missingItems: { stepIndex: numb
 
 // Helper for rendering complete template
 function renderCompleteTemplate(log: AuditLog, avg: number, passed: boolean, failedItems: any[]): string {
-    let md = `# 🏆 最终审计报告: ${log.caseName}\n`;
-    md += `**状态**: ✅ 评估已完成\n\n`;
+    let md = `# 🏆 Final Audit Report: ${log.caseName}\n`;
+    md += `**Status**: ✅ Evaluation Complete\n\n`;
 
-    md += `## 📈 总成绩单\n`;
-    md += `- **平均分**: ${avg.toFixed(1)} / 10\n`;
-    md += `- **结论**: ${passed ? "✅ 通过 (Pass)" : "❌ 驳回 (Fail)"}\n`;
+    md += `## 📈 Overall Scores\n`;
+    md += `- **Average Score**: ${avg.toFixed(1)} / 10\n`;
+    md += `- **Result**: ${passed ? "✅ Pass" : "❌ Fail"}\n`;
 
     if (failedItems.length > 0) {
-        md += `- **不合格项**:\n`;
+        md += `- **Failed Items**:\n`;
         for (const f of failedItems) {
-            md += `  - Step ${f.stepIndex} [${f.dim}]: ${f.score}分 - ${f.reason}\n`;
+            md += `  - Step ${f.stepIndex} [${f.dim}]: Score ${f.score} - ${f.reason}\n`;
         }
     } else {
-        md += `- **不合格项**: 无\n`;
+        md += `- **Failed Items**: None\n`;
     }
     md += `\n`;
 
-    md += `## 📝 详细步骤\n`;
+    md += `## 📝 Detailed Steps\n`;
     md += renderStepDetails(log);
 
     return md;
@@ -57,18 +57,18 @@ function renderStepDetails(log: AuditLog): string {
     const steps = Object.values(log.steps).sort((a, b) => a.stepIndex - b.stepIndex);
     for (const step of steps) {
         md += `### Step ${step.stepIndex}: ${step.description}\n`;
-        md += `- **操作**: ${step.actionType} ${step.coordinates ? `(x: ${step.coordinates.x}, y: ${step.coordinates.y})` : ""}\n`;
+        md += `- **Action**: ${step.actionType} ${step.coordinates ? `(x: ${step.coordinates.x}, y: ${step.coordinates.y})` : ""}\n`;
         if (step.expectedOutcome) {
-            md += `- **预期结果**: ${step.expectedOutcome}\n`;
+            md += `- **Expected Outcome**: ${step.expectedOutcome}\n`;
         }
 
         for (const dim of REQUIRED_DIMS) {
             const ev = step.evaluations ? step.evaluations[dim] : undefined;
             if (ev) {
                 const tag = ev.score >= PASSING_SCORE ? "Pass ✅" : "Fail ❌";
-                md += `- **${dim}**: ${ev.score}分 ${tag} - ${ev.reason}\n`;
+                md += `- **${dim}**: Score ${ev.score} ${tag} - ${ev.reason}\n`;
             } else {
-                md += `- **${dim}**: 🔴 缺失评估\n`;
+                md += `- **${dim}**: 🔴 Missing Evaluation\n`;
             }
         }
         md += `\n`;

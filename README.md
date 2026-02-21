@@ -54,16 +54,15 @@ npm install
 | `launch_app` | Launch app by Bundle ID |
 | `take_screenshot` | Capture screen & track evaluation step |
 | `tap` / `swipe` | Interact with UI (ratio coordinates), screenshot, and track step |
-| `get_evaluation_criteria` | Get dimensions and scoring rubrics (Prompts) |
-| `submit_dimension_score` | Submit score (1-10) for a single dimension on a tracked step |
+| `evaluate` | Unified evaluation: get dimension prompt (initial) or submit score + get next (submit mode) |
 | `get_audit_status` | View missing evaluations dashboard or final markdown report |
 
 ## Typical Workflow
 1. `launch_app("com.example.app")`
 2. `take_screenshot("MyTestCase", 1, "Verify Initial Screen")` or `tap(0.5, 0.5, "MyTestCase", 2, "Click Login")`
-3. `get_evaluation_criteria("overlap")` → Read the prompt for overlap
-4. Agent analyzes UI → `submit_dimension_score("MyTestCase", 1, "overlap", 9, "No overlap")`
-5. Repeat 3-4 until all dimensions are evaluated for the step
+3. `evaluate("MyTestCase", 1)` → Returns the first dimension prompt + `evaluationToken`
+4. Agent analyzes UI → `evaluate("MyTestCase", 1, token, 9, "No overlap")` → Records score, returns next dimension prompt + new token
+5. Repeat step 4 until all 5 dimensions are evaluated
 6. `get_audit_status(["MyTestCase"])` → Output the full markdown report
 
 ## Data

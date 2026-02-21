@@ -8,12 +8,12 @@
  * and provides a rule-based, trackable evaluation workflow.
  *
  * Evaluation workflow for each step:
- *   1. Perform an action (tap / swipe / take_screenshot) — this auto-takes a screenshot and registers a step.
- *   2. For each required dimension (overlap, layout, info_clarity, style, action_result):
- *      a. Call get_evaluation_criteria(dimension) to read the scoring rubric.
- *      b. Visually inspect the screenshot.
- *      c. Call submit_dimension_score to record your score.
- *   3. Call get_audit_status to confirm all dimensions are complete before proceeding to the next action.
+ *   1. Perform an action (tap / swipe / take_screenshot) — auto-takes a screenshot and registers a step.
+ *   2. Call evaluate(caseName, stepIndex) — returns the first dimension prompt + token.
+ *   3. Visually inspect the screenshot based on the prompt.
+ *   4. Call evaluate(caseName, stepIndex, token, score, reason) — records the score, returns the next dimension prompt + new token.
+ *   5. Repeat step 3-4 until all 5 dimensions are evaluated.
+ *   6. Call get_audit_status to get the final markdown report.
  */
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
@@ -23,13 +23,12 @@ import { launchAppSchema, launchApp } from "./tools/launch-app.js";
 import { takeScreenshotSchema, takeScreenshot } from "./tools/take-screenshot.js";
 import { tapSchema, tap } from "./tools/tap.js";
 import { swipeSchema, swipe } from "./tools/swipe.js";
-import { getEvaluationCriteriaSchema, getEvaluationCriteria } from "./tools/get-evaluation-criteria.js";
-import { submitDimensionScoreSchema, submitDimensionScore } from "./tools/submit-dimension-score.js";
+import { evaluateSchema, evaluate } from "./tools/evaluate.js";
 import { getAuditStatusSchema, getAuditStatus } from "./tools/get-audit-status.js";
 
 const server = new McpServer({
     name: "ui-audit-mcp",
-    version: "2.0.0",
+    version: "2.3.0",
 });
 
 // ─── Device operation tools ────────────────────────────────
@@ -68,21 +67,13 @@ server.tool(
 // ─── Evaluation tools ──────────────────────────────────────
 
 server.tool(
-    "get_evaluation_criteria",
-    "Get UI evaluation dimensions and scoring rubrics. " +
-    "Call without arguments to list all dimension IDs. Pass a dimension ID (e.g. 'overlap') to get its detailed prompt and scoring guide. " +
-    "Required dimensions for every step: overlap, layout, info_clarity, style, action_result.",
-    getEvaluationCriteriaSchema.shape,
-    async (args) => getEvaluationCriteria(args)
-);
-
-server.tool(
-    "submit_dimension_score",
-    "Submit a score (0-10) and reason for one UI dimension on a specific step. " +
-    "Every step requires scores for all 5 dimensions: overlap, layout, info_clarity, style, action_result. " +
-    "After submitting, continue with the remaining dimensions, then call get_audit_status to confirm completion.",
-    submitDimensionScoreSchema.shape,
-    async (args) => submitDimensionScore(args)
+    "evaluate",
+    "Unified evaluation tool. Two modes:\n" +
+    "1) INITIAL: Call with only caseName + stepIndex (omit score/reason/token) → returns the first pending dimension's prompt, scoring guide, and evaluationToken.\n" +
+    "2) SUBMIT: Call with caseName + stepIndex + evaluationToken + score + reason → records the score, advances to the next dimension, and returns its prompt + new token (or completion message).\n" +
+    "Required dimensions per step: overlap, layout, info_clarity, style, action_result.",
+    evaluateSchema.shape,
+    async (args) => evaluate(args)
 );
 
 server.tool(

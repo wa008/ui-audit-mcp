@@ -23,6 +23,8 @@ export interface StepRecord {
     screenshotPath: string;
     timestamp: string;
     evaluations: Record<string, DimensionScore>;
+    currentDimIndex: number;
+    evaluationToken?: string;
 }
 
 export interface AuditLog {

@@ -78,6 +78,8 @@ export function recordStep(
         expectedOutcome,
         timestamp: new Date().toISOString(),
         evaluations: existingStep ? existingStep.evaluations : {},
+        currentDimIndex: existingStep && existingStep.currentDimIndex !== undefined ? existingStep.currentDimIndex : 0,
+        evaluationToken: existingStep ? existingStep.evaluationToken : undefined,
     };
 
     writeLog(log);

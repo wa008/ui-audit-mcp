@@ -32,7 +32,7 @@ export async function takeScreenshot(input: z.infer<typeof takeScreenshotSchema>
             {
                 type: "text" as const,
                 text: JSON.stringify({
-                    message: `Step ${input.stepIndex} recorded. Please now evaluate this screenshot across all 5 dimensions (overlap, layout, info_clarity, style, action_result) using submit_dimension_score before proceeding.`,
+                    message: `Step ${input.stepIndex} recorded. Please call evaluate to retrieve the first evaluation dimension and its token before proceeding.`,
                     caseName: input.caseName,
                     stepIndex: input.stepIndex,
                     expectedOutcome: input.expectedOutcome ?? "(pure observation)",
