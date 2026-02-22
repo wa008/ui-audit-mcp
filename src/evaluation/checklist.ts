@@ -38,6 +38,7 @@ export const DIMENSIONS: ChecklistItem[] = [
             "   - Text that is cut off with '...' or overflows its container\n" +
             "   - Elements hidden behind other elements (a popup covering needed info, a floating button sitting on top of text)\n" +
             "   - Content pushed under the system status bar or behind the bottom home indicator\n" +
+            "   - Content clipped or hidden by the notch / Dynamic Island area?\n" +
             "   - If a keyboard is visible, does it cover any input field or button the user needs right now?\n" +
             "2. COMPREHENSION: Within 2 seconds, can you tell what this screen is for and what you should do next?\n" +
             "   - Is the page title or header clear about the screen's purpose?\n" +
@@ -50,6 +51,7 @@ export const DIMENSIONS: ChecklistItem[] = [
             "   - Is any text too small to read comfortably?\n" +
             "   - Pay special attention to text placed over images or colored backgrounds\n" +
             "5. TAP ACCURACY: Can you confidently tap each button without accidentally hitting the wrong one?\n" +
+            "   - Are any tappable elements too small to tap reliably (smaller than a fingertip)?\n" +
             "   - Are any two tappable elements so close together that a normal finger might hit the wrong one?\n" +
             "   - Are any buttons uncomfortably close to the screen edge where system gestures occur?\n\n" +
             "SCORING ATTITUDE: If any single element would make a new user pause and think 'what does this mean?' or 'where did that text go?', that is a usability problem. One confusing element caps the score at 7. Multiple issues = score 5 or below.",
@@ -79,7 +81,8 @@ export const DIMENSIONS: ChecklistItem[] = [
             "   - Are font sizes and weights used consistently? (e.g., all section titles same size, all body text same size)\n" +
             "4. COMPONENT CONSISTENCY: Do similar elements look the same?\n" +
             "   - Compare all buttons — same shape, size, and style?\n" +
-            "   - Compare all cards — same shadows, borders, and corner radius?\n" +
+            "   - Compare all cards — same size, shadows, borders, and corner radius?\n" +
+            "   - Compare all list/table rows — same height, padding, and separator style?\n" +
             "   - Compare all icons — same visual style (all outline or all filled, similar sizing)?\n" +
             "   - Any visible difference between elements that should be identical is a consistency failure.\n" +
             "5. OVERALL POLISH: Does the app feel 'finished'?\n" +

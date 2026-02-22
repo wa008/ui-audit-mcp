@@ -29,7 +29,7 @@ import { getAuditStatusSchema, getAuditStatus } from "./tools/get-audit-status.j
 
 const server = new McpServer({
     name: "ui-audit-mcp",
-    version: "2.4.2",
+    version: "2.4.3",
 });
 
 // ─── Device operation tools ────────────────────────────────
