@@ -50,6 +50,18 @@ export function readAllLogs(): AuditLog[] {
     return logs;
 }
 
+function getLocalTimestamp(): string {
+    const now = new Date();
+    const tzOffset = now.getTimezoneOffset() * 60000;
+    const localISOTime = (new Date(now.getTime() - tzOffset)).toISOString().slice(0, -1);
+
+    const offset = -now.getTimezoneOffset();
+    const sign = offset >= 0 ? '+' : '-';
+    const pad = (n: number) => String(Math.floor(Math.abs(n))).padStart(2, '0');
+
+    return `${localISOTime}${sign}${pad(offset / 60)}:${pad(offset % 60)}`;
+}
+
 export function recordStep(
     caseName: string,
     stepIndex: number,
@@ -76,7 +88,7 @@ export function recordStep(
         screenshotPath,
         coordinates,
         expectedOutcome,
-        timestamp: new Date().toISOString(),
+        timestamp: getLocalTimestamp(),
         evaluations: existingStep ? existingStep.evaluations : {},
         currentDimIndex: existingStep && existingStep.currentDimIndex !== undefined ? existingStep.currentDimIndex : 0,
         evaluationToken: existingStep ? existingStep.evaluationToken : undefined,

@@ -22,7 +22,7 @@ Add this to your MCP client config (e.g., `claude_desktop_config.json`):
   "mcpServers": {
     "ui-audit": {
       "command": "npx",
-      "args": ["-y", "@wa007/ui-audit-mcp"]
+      "args": ["-y", "@wa008/ui-audit-mcp"]
     }
   }
 }
