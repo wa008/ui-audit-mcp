@@ -17,7 +17,7 @@ export interface DimensionScore {
 export interface StepRecord {
     stepIndex: number;
     description: string;
-    actionType: "tap" | "swipe" | "screenshot";
+    actionType: "tap" | "swipe" | "screenshot" | "input_text";
     coordinates?: { x: number; y: number };
     expectedOutcome?: string;
     screenshotPath: string;

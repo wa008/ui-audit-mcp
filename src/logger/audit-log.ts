@@ -66,7 +66,7 @@ export function recordStep(
     caseName: string,
     stepIndex: number,
     description: string,
-    actionType: "tap" | "swipe" | "screenshot",
+    actionType: "tap" | "swipe" | "screenshot" | "input_text",
     screenshotPath: string,
     coordinates?: { x: number; y: number },
     expectedOutcome?: string

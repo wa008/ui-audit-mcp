@@ -148,6 +148,22 @@ export async function swipe(
     }
 }
 
+/** Type text into the currently focused field. */
+export async function inputText(
+    text: string
+): Promise<{ success: boolean; error?: string }> {
+    try {
+        await execFileAsync("idb", ["ui", "text", text]);
+        return { success: true };
+    } catch (err: unknown) {
+        const e = err as { stderr?: string; message?: string; code?: string };
+        if (e.code === "ENOENT") {
+            return { success: false, error: IDB_INSTALL_HINT };
+        }
+        return { success: false, error: e.stderr ?? e.message ?? String(err) };
+    }
+}
+
 // ─── Internal ────────────────────────────────────────────
 
 let cachedScreenSize: { width: number; height: number } | null = null;

@@ -23,12 +23,13 @@ import { launchAppSchema, launchApp } from "./tools/launch-app.js";
 import { takeScreenshotSchema, takeScreenshot } from "./tools/take-screenshot.js";
 import { tapSchema, tap } from "./tools/tap.js";
 import { swipeSchema, swipe } from "./tools/swipe.js";
+import { inputTextSchema, inputText } from "./tools/input-text.js";
 import { evaluateSchema, evaluate } from "./tools/evaluate.js";
 import { getAuditStatusSchema, getAuditStatus } from "./tools/get-audit-status.js";
 
 const server = new McpServer({
     name: "ui-audit-mcp",
-    version: "2.3.0",
+    version: "2.4.2",
 });
 
 // ─── Device operation tools ────────────────────────────────
@@ -62,6 +63,15 @@ server.tool(
     "After this call, evaluate the screenshot across all required dimensions before moving to the next action.",
     swipeSchema.shape,
     async (args) => swipe(args)
+);
+
+server.tool(
+    "input_text",
+    "Type text into the currently focused field. Tap a text field first to focus it, then call this tool. " +
+    "Automatically captures a screenshot and registers a tracked step. " +
+    "After this call, evaluate the screenshot across all required dimensions before moving to the next action.",
+    inputTextSchema.shape,
+    async (args) => inputText(args)
 );
 
 // ─── Evaluation tools ──────────────────────────────────────
