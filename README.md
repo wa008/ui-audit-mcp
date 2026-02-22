@@ -4,7 +4,7 @@ An MCP server for iOS app UI evaluation and testing.
 
 ## Features
 - **Device Control**: Launch apps, take screenshots, tap, and swipe on iOS Simulators.
-- **UI Evaluation**: Structured checklists for quality and style consistency.
+- **UI Evaluation**: 3-dimension user-perspective evaluation (outcome, usability, aesthetics).
 
 ## Prerequisites
 - **Node.js 18+**
@@ -57,12 +57,26 @@ npm install
 | `evaluate` | Unified evaluation: get dimension prompt (initial) or submit score + get next (submit mode) |
 | `get_audit_status` | View missing evaluations dashboard or final markdown report |
 
+## Evaluation Dimensions
+
+Each step is evaluated on up to 3 dimensions, presented in order from easiest to hardest:
+
+| # | Dimension | User's Question | Applied When |
+|---|-----------|----------------|--------------|
+| 1 | **outcome** | "Did my action produce the expected result?" | Action steps (tap/swipe) with `expectedOutcome` |
+| 2 | **usability** | "Can I see everything, understand it, and interact smoothly?" | All steps |
+| 3 | **aesthetics** | "Does this look professional and polished?" | All steps |
+
+- For observation steps (no `expectedOutcome`), `outcome` is skipped automatically.
+- Each dimension must be completed before the next one is presented.
+- Pass threshold: score ≥ 8.
+
 ## Typical Workflow
 1. `launch_app("com.example.app")`
 2. `take_screenshot("MyTestCase", 1, "Verify Initial Screen")` or `tap(0.5, 0.5, "MyTestCase", 2, "Click Login")`
 3. `evaluate("MyTestCase", 1)` → Returns the first dimension prompt + `evaluationToken`
-4. Agent analyzes UI → `evaluate("MyTestCase", 1, token, 9, "No overlap")` → Records score, returns next dimension prompt + new token
-5. Repeat step 4 until all 5 dimensions are evaluated
+4. Agent analyzes UI → `evaluate("MyTestCase", 1, token, 9, "Clean and clear")` → Records score, returns next dimension prompt + new token
+5. Repeat step 4 until all dimensions are evaluated (2 for observation, 3 for action steps)
 6. `get_audit_status(["MyTestCase"])` → Output the full markdown report
 
 ## Data

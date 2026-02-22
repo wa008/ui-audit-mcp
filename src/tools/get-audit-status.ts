@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { readLog, readAllLogs } from "../logger/audit-log.js";
-import { REQUIRED_DIMS, PASSING_SCORE } from "../evaluation/checklist.js";
+import { getRequiredDimsForStep, PASSING_SCORE } from "../evaluation/checklist.js";
 import { AuditLog } from "../types.js";
 
 export const getAuditStatusSchema = z.object({
@@ -62,7 +62,8 @@ function renderStepDetails(log: AuditLog): string {
             md += `- **Expected Outcome**: ${step.expectedOutcome}\n`;
         }
 
-        for (const dim of REQUIRED_DIMS) {
+        const requiredDims = getRequiredDimsForStep(!!step.expectedOutcome);
+        for (const dim of requiredDims) {
             const ev = step.evaluations ? step.evaluations[dim] : undefined;
             if (ev) {
                 const tag = ev.score >= PASSING_SCORE ? "Pass ✅" : "Fail ❌";
@@ -103,19 +104,23 @@ export async function getAuditStatus(input: z.infer<typeof getAuditStatusSchema>
         let missingItems: { stepIndex: number; missing: string[] }[] = [];
 
         for (const step of Object.values(log.steps)) {
+            const requiredDims = getRequiredDimsForStep(!!step.expectedOutcome);
             const evaluated = Object.keys(step.evaluations || {});
-            const missing = REQUIRED_DIMS.filter(d => !evaluated.includes(d));
+            const missing = requiredDims.filter(d => !evaluated.includes(d));
 
             if (missing.length > 0) {
                 allComplete = false;
                 missingItems.push({ stepIndex: step.stepIndex, missing });
             }
 
-            for (const [dim, ev] of Object.entries(step.evaluations || {})) {
-                totalScore += ev.score;
-                totalCount += 1;
-                if (ev.score < PASSING_SCORE) {
-                    failedItems.push({ stepIndex: step.stepIndex, dim, score: ev.score, reason: ev.reason });
+            for (const dim of requiredDims) {
+                const ev = step.evaluations?.[dim];
+                if (ev) {
+                    totalScore += ev.score;
+                    totalCount += 1;
+                    if (ev.score < PASSING_SCORE) {
+                        failedItems.push({ stepIndex: step.stepIndex, dim, score: ev.score, reason: ev.reason });
+                    }
                 }
             }
         }

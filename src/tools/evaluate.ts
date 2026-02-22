@@ -19,7 +19,6 @@ import { getPendingTaskState, validateAndAdvanceState } from "../evaluation/stat
 export const evaluateSchema = z.object({
     caseName: z.string().describe("Name of the test case"),
     stepIndex: z.number().int().positive().describe("Step index to evaluate"),
-    // Optional: omit all three for initial query, provide all three to submit
     evaluationToken: z.string().optional().describe(
         "The exact token from the previous evaluate call. Omit on the first call to get the initial dimension."
     ),

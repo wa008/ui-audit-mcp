@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import { readLog, writeLog } from "../logger/audit-log.js";
-import { DIMENSIONS, REQUIRED_DIMS } from "./checklist.js";
+import { DIMENSIONS, getRequiredDimsForStep } from "./checklist.js";
 
 function generateToken(): string {
     return "tok_" + crypto.randomBytes(4).toString("hex");
@@ -17,20 +17,21 @@ export function getPendingTaskState(caseName: string, stepIndex: number) {
         throw new Error(`Step ${stepIndex} not found in case ${caseName}`);
     }
 
-    if (step.currentDimIndex >= REQUIRED_DIMS.length) {
+    const requiredDims = getRequiredDimsForStep(!!step.expectedOutcome);
+
+    if (step.currentDimIndex >= requiredDims.length) {
         return {
             completed: true,
-            message: `All ${REQUIRED_DIMS.length} dimensions for Step ${stepIndex} are fully evaluated! You may now proceed to interact with the device further (e.g. tap, swipe) or call get_audit_status.`
+            message: `All ${requiredDims.length} dimensions for Step ${stepIndex} are fully evaluated! You may now proceed to interact with the device further (e.g. tap, swipe) or call get_audit_status.`
         };
     }
 
-    // Generate a token if there isn't one
     if (!step.evaluationToken) {
         step.evaluationToken = generateToken();
         writeLog(log);
     }
 
-    const currentDimId = REQUIRED_DIMS[step.currentDimIndex];
+    const currentDimId = requiredDims[step.currentDimIndex];
     const criteria = DIMENSIONS.find(d => d.id === currentDimId);
 
     if (!criteria) {
@@ -44,7 +45,8 @@ export function getPendingTaskState(caseName: string, stepIndex: number) {
         description: criteria.description,
         scoringGuide: criteria.scoringGuide,
         token: step.evaluationToken,
-        stepIndex: stepIndex
+        stepIndex: stepIndex,
+        progress: `${step.currentDimIndex + 1} / ${requiredDims.length}`,
     };
 }
 
@@ -59,7 +61,9 @@ export function validateAndAdvanceState(caseName: string, stepIndex: number, tok
         throw new Error(`Step ${stepIndex} not found in case ${caseName}`);
     }
 
-    if (step.currentDimIndex >= REQUIRED_DIMS.length) {
+    const requiredDims = getRequiredDimsForStep(!!step.expectedOutcome);
+
+    if (step.currentDimIndex >= requiredDims.length) {
         throw new Error(`Step ${stepIndex} is already fully evaluated.`);
     }
 
@@ -67,19 +71,16 @@ export function validateAndAdvanceState(caseName: string, stepIndex: number, tok
         throw new Error("Invalid token. Do not guess tokens or run multiple submissions at once.");
     }
 
-    const currentDimId = REQUIRED_DIMS[step.currentDimIndex];
+    const currentDimId = requiredDims[step.currentDimIndex];
 
-    // Record the score
     step.evaluations[currentDimId] = {
         score,
         reason,
     };
 
-    // Advance the state
     step.currentDimIndex += 1;
 
-    // Clear the old token and generate a new one if not completed
-    if (step.currentDimIndex < REQUIRED_DIMS.length) {
+    if (step.currentDimIndex < requiredDims.length) {
         step.evaluationToken = generateToken();
     } else {
         step.evaluationToken = undefined;

@@ -71,7 +71,7 @@ server.tool(
     "Unified evaluation tool. Two modes:\n" +
     "1) INITIAL: Call with only caseName + stepIndex (omit score/reason/token) → returns the first pending dimension's prompt, scoring guide, and evaluationToken.\n" +
     "2) SUBMIT: Call with caseName + stepIndex + evaluationToken + score + reason → records the score, advances to the next dimension, and returns its prompt + new token (or completion message).\n" +
-    "Required dimensions per step: overlap, layout, info_clarity, style, action_result.",
+    "Dimensions (easy → hard): outcome → usability → aesthetics. For observation steps (no expectedOutcome), outcome is skipped automatically.",
     evaluateSchema.shape,
     async (args) => evaluate(args)
 );
